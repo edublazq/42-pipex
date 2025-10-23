@@ -23,3 +23,23 @@ void	free_error(void *toclean, char *msg, int exit_code)
 	free(toclean);
 	error_msg(msg, exit_code);
 }
+
+void	*free_pipex(t_pipe *pipex)
+{
+	size_t	i;
+
+	i = 0;
+	while (pipex->path[i])
+		free(pipex->path[i++]);
+	free(pipex->path);
+	i = 0;
+	while(pipex->cmd[0][i])
+		free(pipex->cmd[0][i++]);
+	free(pipex->cmd[0]);
+	i = 0;
+	while(pipex->cmd[1][i])
+		free(pipex->cmd[1][i++]);
+	free(pipex->cmd[1]);
+	free(pipex);
+	return (NULL);
+}

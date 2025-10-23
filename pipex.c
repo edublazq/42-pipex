@@ -73,13 +73,29 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 	return (route);
 }
 
-pid_t	process(char *cmd, t_pipe *pipex)
+void	process(t_pipe *pipex, char **env)
 {
-	pid_t	proc;
-	char	*cmd_route;
+	pid_t	child[2];
+	char	*cmd_route[2];
+	size_t	i;
 
-	proc = fork();
-	cmd_route = search_cmd(cmd, pipex);
+	i = 0;
+	while (i < 2)
+	{
+	child[i] = fork();
+	if (child[i] == 0)
+	{
+		dup2(pipex->fd[0], 0);
+		dup2(pipex->fd[1], 1);
+		cmd_route[0] = search_cmd(pipex->cmd[0][0], pipex);
+		execve(cmd_route[0], pipex->cmd[0], env);
+	}
+	else if (child[i] < 0)
+		printf("Child finished");
+	else
+		perror("fork failed");
+	i++;
+	}
 }
 
 int	main(int ac, char **av, char **env)
@@ -93,9 +109,9 @@ int	main(int ac, char **av, char **env)
 	if (!pipe)
 		error_msg("MALLOC FAIL", 3);
 	parse_pipe(av, env, pipex);
-	route = search_cmd(pipex->cmd[0][0], pipex);
-	printf("%s", route);
-	// execute(pipex);
-	free(pipex);
+	process(pipex, env);
+	close(pipex->fd[0]);
+	close(pipex->fd[1]);
+	free_pipex(pipex);
 	return (0);
 }

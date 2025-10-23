@@ -15,6 +15,7 @@
 
 # include "Libft/libft.h"
 # include <fcntl.h>
+# include <sys/wait.h>
 
 # define ARGC 2
 
@@ -27,5 +28,6 @@ typedef struct s_pipe
 
 void	error_msg(char *msg, int exit_code);
 void	free_error(void *toclean, char *msg, int exit_code);
+void	*free_pipex(t_pipe *pipex);
 
 #endif
