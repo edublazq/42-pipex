@@ -75,27 +75,41 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 
 void	process(t_pipe *pipex, char **env)
 {
-	pid_t	child[2];
+	pid_t	child;
 	char	*cmd_route[2];
-	size_t	i;
+	int		fd_pipe[2];
 
-	i = 0;
-	while (i < 2)
+	cmd_route[0] = search_cmd(pipex->cmd[0][0], pipex);
+	cmd_route[1] = search_cmd(pipex->cmd[1][0], pipex);
+	printf("CMD ROUTE 1-> %s", cmd_route[0]);
+	printf("CMD ROUTE 1-> %s", cmd_route[1]);
+	printf("rutas puestas\n");
+	if (!cmd_route[0] || !cmd_route[1])
 	{
-	child[i] = fork();
-	if (child[i] == 0)
+		free_pipex(pipex);
+		return ;
+	}
+	pipe(fd_pipe);
+	printf("pipe puesto\n");
+	child = fork();
+	if (child == 0)
 	{
-		dup2(pipex->fd[0], 0);
-		dup2(pipex->fd[1], 1);
-		cmd_route[0] = search_cmd(pipex->cmd[0][0], pipex);
+		dup2(fd_pipe[1], STDOUT_FILENO);
+		dup2(pipex->fd[0], STDIN_FILENO);
+		fprintf(stderr, "HIJO -> %d\n",getpid()); // ELIMINAR
 		execve(cmd_route[0], pipex->cmd[0], env);
+		close(fd_pipe[1]);
 	}
-	else if (child[i] < 0)
-		printf("Child finished");
+	else if (child > 0)
+	{
+		dup2(fd_pipe[0], STDIN_FILENO);
+		dup2(pipex->fd[1], STDOUT_FILENO);
+		fprintf(stderr, " PADRE -> %d\n",getpid()); // ELIMINAR
+		execve(cmd_route[1], pipex->cmd[1], env);
+		close(fd_pipe[0]);
+	}
 	else
-		perror("fork failed");
-	i++;
-	}
+		perror("perror:");
 }
 
 int	main(int ac, char **av, char **env)
@@ -106,7 +120,7 @@ int	main(int ac, char **av, char **env)
 	if (ac != 5)
 		error_msg("Not enough arguments", ARGC);
 	pipex = ft_calloc(1, sizeof(t_pipe));
-	if (!pipe)
+	if (!pipex)
 		error_msg("MALLOC FAIL", 3);
 	parse_pipe(av, env, pipex);
 	process(pipex, env);
