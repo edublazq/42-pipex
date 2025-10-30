@@ -14,7 +14,6 @@
 
 static void	set_path(t_pipe *pipex)
 {
-	size_t	len;
 	size_t	i;
 
 	i = 0;
@@ -25,17 +24,17 @@ static void	set_path(t_pipe *pipex)
 	}
 }
 
-static void	parse_pipe(char **av, char **env, t_pipe *pipex)
+static t_pipe	*parse_pipe(char **av, char **env, t_pipe *pipex)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	pipex->fd[0] = open(av[1], O_RDONLY);
 	if (pipex->fd[0] == -1)
-		free_error(pipex, "File descriptor error 1", 3);
+		free_error(pipex, "File descriptor error 1", 1);
 	pipex->fd[1] = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (pipex->fd[1] == -1)
-		free_error(pipex, "File descriptor error 2", 3);
+		free_error(pipex, "File descriptor error 2", 1);
 	pipex->cmd[0] = ft_split(av[2], ' ');
 	pipex->cmd[1] = ft_split(av[3], ' ');
 	while (env[i])
@@ -50,14 +49,17 @@ static void	parse_pipe(char **av, char **env, t_pipe *pipex)
 	}
 	if (!(env[i]))
 		free_error(pipex, "Couldn't find $PATH", 3);
+	return (pipex);
 }
 
 char	*search_cmd(char *cmd, t_pipe *pipex)
 {
 	char	*route;
 	size_t	i;
-	
+
 	i = 0;
+	if (access(cmd, X_OK) == 0)
+		return (cmd);
 	while (pipex->path[i])
 	{
 		route = ft_strjoin(pipex->path[i], cmd);
@@ -67,7 +69,6 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 		route = NULL;
 		i++;
 	}
-	i = 0;
 	if (!route)
 		free_error(pipex, "Couldn't find the command in $PATH", 1);
 	return (route);
@@ -75,54 +76,49 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 
 void	process(t_pipe *pipex, char **env)
 {
-	pid_t	child;
-	char	*cmd_route[2];
+	pid_t	child[2];
 	int		fd_pipe[2];
 
-	cmd_route[0] = search_cmd(pipex->cmd[0][0], pipex);
-	cmd_route[1] = search_cmd(pipex->cmd[1][0], pipex);
-	printf("CMD ROUTE 1-> %s", cmd_route[0]);
-	printf("CMD ROUTE 1-> %s", cmd_route[1]);
-	printf("rutas puestas\n");
-	if (!cmd_route[0] || !cmd_route[1])
-	{
-		free_pipex(pipex);
-		return ;
-	}
 	pipe(fd_pipe);
-	printf("pipe puesto\n");
-	child = fork();
-	if (child == 0)
+	child[0] = fork();
+	if (child[0] == 0)
 	{
 		dup2(fd_pipe[1], STDOUT_FILENO);
 		dup2(pipex->fd[0], STDIN_FILENO);
-		fprintf(stderr, "HIJO -> %d\n",getpid()); // ELIMINAR
-		execve(cmd_route[0], pipex->cmd[0], env);
 		close(fd_pipe[1]);
-	}
-	else if (child > 0)
-	{
-		dup2(fd_pipe[0], STDIN_FILENO);
-		dup2(pipex->fd[1], STDOUT_FILENO);
-		fprintf(stderr, " PADRE -> %d\n",getpid()); // ELIMINAR
-		execve(cmd_route[1], pipex->cmd[1], env);
 		close(fd_pipe[0]);
+		execve(search_cmd(pipex->cmd[0][0], pipex), pipex->cmd[0], env);
 	}
-	else
-		perror("perror:");
+	else if (child[0] > 0)
+	{
+		child[1] = fork();
+		if (child[1] == 0)
+		{
+			waitpid(child[0], NULL, 0);
+			dup2(fd_pipe[0], STDIN_FILENO);
+			dup2(pipex->fd[1], STDOUT_FILENO);
+			close(fd_pipe[1]);
+			close(fd_pipe[0]);
+			execve(search_cmd(pipex->cmd[1][0], pipex), pipex->cmd[1], env);
+		}
+	}
 }
 
 int	main(int ac, char **av, char **env)
 {
 	t_pipe	*pipex;
-	char	*route;
 
 	if (ac != 5)
-		error_msg("Not enough arguments", ARGC);
+	{
+		ft_putstr_fd("Usage: infile command1 command2 outfile", 2);
+		exit(1);
+	}
 	pipex = ft_calloc(1, sizeof(t_pipe));
 	if (!pipex)
-		error_msg("MALLOC FAIL", 3);
-	parse_pipe(av, env, pipex);
+		exit(1);
+	pipex = parse_pipe(av, env, pipex);
+	if (!pipex)
+		free_error(pipex, "error on pipex: ", 1);
 	process(pipex, env);
 	close(pipex->fd[0]);
 	close(pipex->fd[1]);

@@ -12,18 +12,6 @@
 
 #include "pipex.h"
 
-void	error_msg(char *msg, int exit_code)
-{
-	ft_putstr_fd(msg, 2);
-	exit(exit_code);
-}
-
-void	free_error(void *toclean, char *msg, int exit_code)
-{
-	free(toclean);
-	error_msg(msg, exit_code);
-}
-
 void	*free_pipex(t_pipe *pipex)
 {
 	size_t	i;
@@ -33,13 +21,21 @@ void	*free_pipex(t_pipe *pipex)
 		free(pipex->path[i++]);
 	free(pipex->path);
 	i = 0;
-	while(pipex->cmd[0][i])
+	while (pipex->cmd[0][i])
 		free(pipex->cmd[0][i++]);
 	free(pipex->cmd[0]);
 	i = 0;
-	while(pipex->cmd[1][i])
+	while (pipex->cmd[1][i])
 		free(pipex->cmd[1][i++]);
 	free(pipex->cmd[1]);
 	free(pipex);
+	pipex = NULL;
 	return (NULL);
+}
+
+void	*free_error(void *toclean, char *msg, int exit_code)
+{
+	perror(msg);
+	exit(exit_code);
+	return(free_pipex(toclean));
 }

@@ -26,8 +26,7 @@ typedef struct s_pipe
 	char	**path;
 }	t_pipe;
 
-void	error_msg(char *msg, int exit_code);
-void	free_error(void *toclean, char *msg, int exit_code);
+void	*free_error(void *toclean, char *msg, int exit_code);
 void	*free_pipex(t_pipe *pipex);
 
 #endif

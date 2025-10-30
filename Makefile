@@ -4,18 +4,17 @@ CFLAGS = -Wall -Wextra -Werror -g3
 RM = rm -rf
 LIBFT_DIR = Libft
 LIBFT = $(LIBFT_DIR)/libft.a
-SRCS = 
+SRCS = pipex.c pipex_utils.c
 OBJS = $(SRCS:.c=.o)
 
-.c.o:
-	@$(CC) $(CFLAGS) -c $< -o ${<:.c=.o} -I./Libft
+%.o: %.c
+	@$(CC) $(CFLAGS) -c $< -o ${<:.c=.o} 
 
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(OBJS)
 	@echo "Compiling pipex..."
-	@cp $(LIBFT) $(NAME)
-	@ar rcs $(NAME) $(OBJS)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
 
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR) all
