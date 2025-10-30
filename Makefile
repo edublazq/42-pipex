@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror -g3
 RM = rm -rf
 LIBFT_DIR = Libft
 LIBFT = $(LIBFT_DIR)/libft.a
-SRCS = pipex.c pipex_utils.c
+SRCS = pipex.c error_manager.c
 OBJS = $(SRCS:.c=.o)
 
 %.o: %.c

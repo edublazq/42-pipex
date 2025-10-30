@@ -28,15 +28,15 @@ static t_pipe	*parse_pipe(char **av, char **env, t_pipe *pipex)
 {
 	size_t	i;
 
-	i = 0;
-	pipex->fd[0] = open(av[1], O_RDONLY);
-	if (pipex->fd[0] == -1)
-		free_error(pipex, "File descriptor error 1", 1);
 	pipex->fd[1] = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (pipex->fd[1] == -1)
-		free_error(pipex, "File descriptor error 2", 1);
+		free_error(pipex, "File descriptor error 2", 3);
+	pipex->fd[0] = open(av[1], O_RDONLY);
+	if (pipex->fd[0] == -1)
+		free_error(pipex, "File descriptor error 1", 3);
 	pipex->cmd[0] = ft_split(av[2], ' ');
 	pipex->cmd[1] = ft_split(av[3], ' ');
+	i = 0;
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
@@ -70,7 +70,7 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 		i++;
 	}
 	if (!route)
-		free_error(pipex, "Couldn't find the command in $PATH", 1);
+		free_error(pipex, "Couldn't find the command in $PATH ", 1);
 	return (route);
 }
 
@@ -79,9 +79,8 @@ void	process(t_pipe *pipex, char **env)
 	pid_t	child[2];
 	int		fd_pipe[2];
 
-	pipe(fd_pipe);
 	child[0] = fork();
-	if (child[0] == 0)
+	if (child[0] == 0 && !pipe(fd_pipe))
 	{
 		dup2(fd_pipe[1], STDOUT_FILENO);
 		dup2(pipex->fd[0], STDIN_FILENO);

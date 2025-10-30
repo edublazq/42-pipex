@@ -36,6 +36,12 @@ void	*free_pipex(t_pipe *pipex)
 void	*free_error(void *toclean, char *msg, int exit_code)
 {
 	perror(msg);
+	if (exit_code == 3)
+	{
+		free(toclean);
+		toclean = NULL;
+		exit(exit_code);
+	}
+	free_pipex(toclean);
 	exit(exit_code);
-	return(free_pipex(toclean));
 }

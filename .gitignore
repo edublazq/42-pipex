@@ -1,3 +1,4 @@
 *.o
 infile
 outfile
+output
