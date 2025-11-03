@@ -2,9 +2,9 @@ NAME = pipex
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g3
 RM = rm -rf
-LIBFT_DIR = Libft
+LIBFT_DIR = ./inc/Libft
 LIBFT = $(LIBFT_DIR)/libft.a
-SRCS = pipex.c error_manager.c
+SRCS = ./srcs/pipex.c ./srcs/error_manager.c ./srcs/childs.c
 OBJS = $(SRCS:.c=.o)
 
 %.o: %.c

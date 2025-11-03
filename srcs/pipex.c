@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../inc/pipex.h"
 
 static void	set_path(t_pipe *pipex)
 {
@@ -19,7 +19,8 @@ static void	set_path(t_pipe *pipex)
 	i = 0;
 	while (pipex->path[i])
 	{
-		ft_strlcat(pipex->path[i], "/", 100);
+		ft_strlcat(pipex->path[i], "/", 1000);
+		printf("%s\n", pipex->path[i]);
 		i++;
 	}
 }
@@ -76,26 +77,25 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 
 void	process(t_pipe *pipex, char **env)
 {
-	pid_t	child[2];
 	int		fd_pipe[2];
 
-	child[0] = fork();
-	if (child[0] == 0 && !pipe(fd_pipe))
+	pipe(fd_pipe);
+	pipex->child[0] = fork();
+	if (pipex->child[0] == 0)
 	{
-		dup2(fd_pipe[1], STDOUT_FILENO);
-		dup2(pipex->fd[0], STDIN_FILENO);
+		dup2_manager(fd_pipe[1], pipex->fd[0], pipex);
 		close(fd_pipe[1]);
 		close(fd_pipe[0]);
+		close(pipex->fd[0]);
 		execve(search_cmd(pipex->cmd[0][0], pipex), pipex->cmd[0], env);
 	}
-	else if (child[0] > 0)
+	else if (pipex->child[0] > 0)
 	{
-		child[1] = fork();
-		if (child[1] == 0)
+		pipex->child[1] = fork();
+		if (pipex->child[1] == 0)
 		{
-			waitpid(child[0], NULL, 0);
-			dup2(fd_pipe[0], STDIN_FILENO);
-			dup2(pipex->fd[1], STDOUT_FILENO);
+			
+			dup2_manager(pipex->fd[1] ,fd_pipe[0], pipex);
 			close(fd_pipe[1]);
 			close(fd_pipe[0]);
 			execve(search_cmd(pipex->cmd[1][0], pipex), pipex->cmd[1], env);
@@ -119,6 +119,8 @@ int	main(int ac, char **av, char **env)
 	if (!pipex)
 		free_error(pipex, "error on pipex: ", 1);
 	process(pipex, env);
+	waitpid(pipex->child[0], NULL, 0);
+	waitpid(pipex->child[1], NULL, 0);
 	close(pipex->fd[0]);
 	close(pipex->fd[1]);
 	free_pipex(pipex);
