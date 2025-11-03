@@ -19,3 +19,9 @@ void	dup2_manager(int fd_stdout, int fd_stdin, t_pipe *pipex)
 	if (dup2(fd_stdin, STDIN_FILENO) == -1)
 		free_error(pipex, "dup2 error: ", 1);
 }
+
+void	close_pipe(int *pipe)
+{
+	close(pipe[0]);
+	close(pipe[1]);
+}

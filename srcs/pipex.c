@@ -17,15 +17,15 @@ static void	set_path(t_pipe *pipex)
 	size_t	i;
 
 	i = 0;
-	while (pipex->path[i])
+	while (pipex->path[i] != NULL)
 	{
-		ft_strlcat(pipex->path[i], "/", 1000);
+		pipex->path[i] = ft_strjoin(pipex->path[i], "/");
 		printf("%s\n", pipex->path[i]);
 		i++;
 	}
 }
 
-static t_pipe	*parse_pipe(char **av, char **env, t_pipe *pipex)
+static t_pipe	*init_pipex(char **av, char **env, t_pipe *pipex)
 {
 	size_t	i;
 
@@ -35,6 +35,7 @@ static t_pipe	*parse_pipe(char **av, char **env, t_pipe *pipex)
 	pipex->fd[0] = open(av[1], O_RDONLY);
 	if (pipex->fd[0] == -1)
 		free_error(pipex, "File descriptor error 1", 3);
+	printf("%s \n", av[2]);
 	pipex->cmd[0] = ft_split(av[2], ' ');
 	pipex->cmd[1] = ft_split(av[3], ' ');
 	i = 0;
@@ -48,7 +49,7 @@ static t_pipe	*parse_pipe(char **av, char **env, t_pipe *pipex)
 		}
 		i++;
 	}
-	if (!(env[i]))
+	if (!(env[i]) || !pipex->path)
 		free_error(pipex, "Couldn't find $PATH", 3);
 	return (pipex);
 }
@@ -61,8 +62,9 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 	i = 0;
 	if (access(cmd, X_OK) == 0)
 		return (cmd);
-	while (pipex->path[i])
+	while (pipex->path[i] != NULL && cmd != NULL)
 	{
+		//printf("%s %s", pipex->path[i], cmd);
 		route = ft_strjoin(pipex->path[i], cmd);
 		if (access(route, X_OK) == 0)
 			break ;
@@ -84,8 +86,7 @@ void	process(t_pipe *pipex, char **env)
 	if (pipex->child[0] == 0)
 	{
 		dup2_manager(fd_pipe[1], pipex->fd[0], pipex);
-		close(fd_pipe[1]);
-		close(fd_pipe[0]);
+		close_pipe(fd_pipe);
 		close(pipex->fd[0]);
 		execve(search_cmd(pipex->cmd[0][0], pipex), pipex->cmd[0], env);
 	}
@@ -94,12 +95,12 @@ void	process(t_pipe *pipex, char **env)
 		pipex->child[1] = fork();
 		if (pipex->child[1] == 0)
 		{
-			
 			dup2_manager(pipex->fd[1] ,fd_pipe[0], pipex);
-			close(fd_pipe[1]);
-			close(fd_pipe[0]);
+			close_pipe(fd_pipe);
+			close(pipex->fd[1]);
 			execve(search_cmd(pipex->cmd[1][0], pipex), pipex->cmd[1], env);
 		}
+		close_pipe(fd_pipe);
 	}
 }
 
@@ -115,14 +116,14 @@ int	main(int ac, char **av, char **env)
 	pipex = ft_calloc(1, sizeof(t_pipe));
 	if (!pipex)
 		exit(1);
-	pipex = parse_pipe(av, env, pipex);
+	pipex = init_pipex(av, env, pipex);
 	if (!pipex)
 		free_error(pipex, "error on pipex: ", 1);
 	process(pipex, env);
-	waitpid(pipex->child[0], NULL, 0);
-	waitpid(pipex->child[1], NULL, 0);
 	close(pipex->fd[0]);
 	close(pipex->fd[1]);
+	waitpid(pipex->child[0], NULL, 0);
+	waitpid(pipex->child[1], NULL, 0);
 	free_pipex(pipex);
 	return (0);
 }

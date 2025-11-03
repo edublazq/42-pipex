@@ -29,6 +29,7 @@ typedef struct s_pipe
 
 //CHILDS
 void	dup2_manager(int fd_stdout, int fd_stdin, t_pipe *pipex);
+void	close_pipe(int *pipe);
 
 //ERROR MANAGEMENT
 void	*free_error(void *toclean, char *msg, int exit_code);

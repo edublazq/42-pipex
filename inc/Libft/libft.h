@@ -35,7 +35,7 @@ char	*ft_strdup(const char *str);
 void	ft_putchar_fd(char c, int fd);
 void	ft_putnbr_fd(int n, int fd);
 void	ft_putstr_fd(char *s, int fd);
-char	*ft_strjoin(const char *s1, const char *s2);
+char	*ft_strjoin(char *s1, char *s2);
 char	*ft_itoa(int n);
 void	ft_putendl_fd(char *s, int fd);
 int		ft_isdigit(int c);
@@ -54,6 +54,7 @@ char	*ft_strnstr(const char *big, const char *little, size_t len);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 void	*ft_calloc(size_t nmemb, size_t size);
 void	ft_striteri(char *s, void (*f)(unsigned int, char*));
+char	*ft_strcat(char	*s1, char *s2);
 
 typedef struct s_list
 {
