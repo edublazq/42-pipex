@@ -5,7 +5,9 @@ RM = rm -rf
 LIBFT_DIR = ./inc/Libft
 LIBFT = $(LIBFT_DIR)/libft.a
 SRCS = ./srcs/pipex.c ./srcs/error_manager.c ./srcs/childs.c
+BONUS_SRCS = ./bonus_srcs/pipex_bonus.c ./bonus_srcs/error_manager_bonus.c
 OBJS = $(SRCS:.c=.o)
+BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o ${<:.c=.o} 
@@ -15,6 +17,13 @@ all: $(NAME)
 $(NAME): $(LIBFT) $(OBJS)
 	@echo "Compiling pipex..."
 	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+
+relink:
+	touch .bonus
+
+bonus: $(BONUS_OBJS) relink
+	@echo "Compiling bonus pipex..."
+	@$(CC) $(CFLAGS) $(BONUS_OBJS) $(LIBFT) -o $(NAME)
 
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR) all
@@ -31,4 +40,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re relink bonus

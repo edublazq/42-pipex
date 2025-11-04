@@ -1,0 +1,11 @@
+total 132
+-rwxr-xr-x 1 bamberger12 bamberger12 16184 nov  4 11:53 a.out
+drwxr-xr-x 3 bamberger12 bamberger12  4096 nov  4 11:53 inc
+-rw-r--r-- 1 bamberger12 bamberger12    12 nov  4 11:56 infile
+drwxr-xr-x 2 bamberger12 bamberger12  4096 oct 23 10:53 Libft
+-rw-r--r-- 1 bamberger12 bamberger12   666 nov  4 11:53 Makefile
+-rw-r--r-- 1 bamberger12 bamberger12     0 nov  4 11:56 out
+-rw-r--r-- 1 bamberger12 bamberger12     0 nov  4 11:54 outfile
+-rwxr-xr-x 1 bamberger12 bamberger12 93864 nov  4 11:54 pipex
+-rw-r--r-- 1 bamberger12 bamberger12   237 nov  4 11:53 README.md
+drwxr-xr-x 2 bamberger12 bamberger12  4096 nov  4 11:54 srcs
