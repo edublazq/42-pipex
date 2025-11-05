@@ -10,17 +10,35 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
+char	*ft_strjoin_gnl(char *s1, char *s2)
 {
+	char	*join;
 	size_t	i;
+	size_t	j;
 
+	if (!s1 || !s2)
+		return (NULL);
 	i = 0;
-	while (s[i])
+	j = 0;
+	join = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!join)
+		return (NULL);
+	while (s1[i])
+	{
+		join[i] = s1[i];
 		i++;
-	return (i);
+	}
+	while (s2[j])
+	{
+		join[i + j] = s2[j];
+		j++;
+	}
+	join[i + j] = '\0';
+	free(s1);
+	free(s2);
+	return (join);
 }
 
 char	*new_hold(char *hold, int fd, int *read_info)
@@ -42,7 +60,7 @@ char	*new_hold(char *hold, int fd, int *read_info)
 			return (NULL);
 		}
 		buffer[*read_info] = '\0';
-		hold = ft_strjoin(hold, buffer);
+		hold = ft_strjoin_gnl(hold, buffer);
 		if (ft_strchr(hold, '\n'))
 			break ;
 		if (*read_info == 0)
@@ -101,11 +119,4 @@ char	*get_next_line(int fd)
 	if (read_info == 0 && (!hold || *hold == '\0'))
 		free(hold);
 	return (output);
-}
-
-int	main(void)
-{
-	char *gnl = get_next_line(0);
-	printf("%s", gnl);
-	free(gnl);
 }

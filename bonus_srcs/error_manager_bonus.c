@@ -12,6 +12,34 @@
 
 #include "../inc/pipex_bonus.h"
 
+void	freedom(void *to_free)
+{
+	free(to_free);
+	to_free = NULL;
+}
+
+void	free_pipex(t_pipex *pipex)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	j = 0;
+	while (pipex->cmd[i])
+	{
+		while (pipex->cmd[i][j])
+			freedom(pipex->cmd[i][j++]);
+		i++;
+	}
+	freedom(pipex->cmd);
+	i = 0;
+	while (pipex->path[i])
+		freedom(pipex->path[i++]);
+	freedom(pipex->path);
+	freedom(pipex->child);
+	freedom(pipex);
+}
+
 void	exit_error(char *msg, int exit_code)
 {
 	perror(msg);

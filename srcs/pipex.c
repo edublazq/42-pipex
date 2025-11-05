@@ -20,7 +20,6 @@ static void	set_path(t_pipe *pipex)
 	while (pipex->path[i] != NULL)
 	{
 		pipex->path[i] = ft_strjoin(pipex->path[i], "/");
-		printf("%s\n", pipex->path[i]);
 		i++;
 	}
 }
@@ -64,7 +63,6 @@ char	*search_cmd(char *cmd, t_pipe *pipex)
 		return (cmd);
 	while (pipex->path[i] != NULL && cmd != NULL)
 	{
-		//printf("%s %s", pipex->path[i], cmd);
 		route = ft_strjoin(pipex->path[i], cmd);
 		if (access(route, X_OK) == 0)
 			break ;
@@ -95,7 +93,7 @@ void	process(t_pipe *pipex, char **env)
 		pipex->child[1] = fork();
 		if (pipex->child[1] == 0)
 		{
-			dup2_manager(pipex->fd[1] ,fd_pipe[0], pipex);
+			dup2_manager(pipex->fd[1], fd_pipe[0], pipex);
 			close_pipe(fd_pipe);
 			close(pipex->fd[1]);
 			execve(search_cmd(pipex->cmd[1][0], pipex), pipex->cmd[1], env);

@@ -20,18 +20,22 @@
 
 typedef struct s_pipex
 {
-	int		nb;
+	int		here_doc;
+	size_t	nb;
 	char	***cmd;
 	int		fd[2];
 	char	**path;
 	pid_t	*child;
 }	t_pipex;
 
-//CHILDS
+//UTILS
 void	set_number(int ac, char **av, t_pipex *pipex);
+void	set_fd(int ac, char **av, t_pipex *pipex);
 
 //ERRORS
+void	freedom(void *to_free);
 void	exit_error(char *msg, int exit_code);
+void	free_pipex(t_pipex *pipex);
 void	free_exit(void *to_free, char *msg, int exit_code);
 
 #endif

@@ -4,8 +4,11 @@ CFLAGS = -Wall -Wextra -Werror -g3
 RM = rm -rf
 LIBFT_DIR = ./inc/Libft
 LIBFT = $(LIBFT_DIR)/libft.a
+GNL_DIR = ./inc/get_next_line
+GNL = $(GNL_DIR)/get_next_line.c
 SRCS = ./srcs/pipex.c ./srcs/error_manager.c ./srcs/childs.c
-BONUS_SRCS = ./bonus_srcs/pipex_bonus.c ./bonus_srcs/error_manager_bonus.c
+BONUS_SRCS = ./bonus_srcs/pipex_bonus.c ./bonus_srcs/error_manager_bonus.c \
+./bonus_srcs/pipex_utils_bonus.c
 OBJS = $(SRCS:.c=.o)
 BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 
@@ -21,9 +24,9 @@ $(NAME): $(LIBFT) $(OBJS)
 relink:
 	touch .bonus
 
-bonus: $(BONUS_OBJS) relink
+bonus: $(LIBFT) $(BONUS_OBJS) relink
 	@echo "Compiling bonus pipex..."
-	@$(CC) $(CFLAGS) $(BONUS_OBJS) $(LIBFT) -o $(NAME)
+	@$(CC) $(CFLAGS) $(BONUS_OBJS) $(GNL) $(LIBFT) -o $(NAME)
 
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR) all

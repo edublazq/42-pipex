@@ -30,10 +30,16 @@ static void	init_pipex(int ac, char **av, char **env, t_pipex *pipex)
 	size_t	i;
 
 	set_number(ac, av, pipex);
-	set_fd();
+	set_fd(ac, av, pipex);
 	i = 0;
 	while (i < pipex->nb)
-		pipex->cmd[i] = ft_split(av[i++ + 2], ' ');
+	{
+		if (pipex->here_doc == 0)
+			pipex->cmd[i] = ft_split(av[i + 2], ' ');
+		else
+			pipex->cmd[i] = ft_split(av[i + 3], ' ');
+		i++;
+	}
 	i = 0;
 	while (env[i])
 	{
@@ -59,6 +65,6 @@ int	main(int ac, char **av, char **env)
 	
 	pipex = ft_calloc(1, sizeof(t_pipex));
 	if (!pipex)
-		error_exit("malloc fail: ", 1);
+		exit_error("malloc fail: ", 1);
 	init_pipex(ac, av, env, pipex);
 }

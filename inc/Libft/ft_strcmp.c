@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strcat.c                                        :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: edblazqu <edblazqu@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/05 07:27:32 by edblazqu          #+#    #+#             */
-/*   Updated: 2025/11/05 07:27:33 by edblazqu         ###   ########.fr       */
+/*   Created: 2025/11/05 08:16:12 by edblazqu          #+#    #+#             */
+/*   Updated: 2025/11/05 08:16:13 by edblazqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strcat(char	*s1, char *s2)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	int	i;
-	int	s1_len;
+	size_t			i;
+	unsigned char	*ptr_s1;
+	unsigned char	*ptr_s2;
 
-	if (!s1 || !s2)
-		return (NULL);
-	s1_len = ft_strlen(s1);
 	i = 0;
-	while (s2[i])
+	ptr_s1 = (unsigned char *)s1;
+	ptr_s2 = (unsigned char *)s2;
+	while (ptr_s1[i] || ptr_s2[i])
 	{
-		s1[s1_len + i] = s2[i];
-		i++;
+		if (ptr_s1[i] != ptr_s2[i])
+			return ((int)ptr_s1[i] - (int)ptr_s2[i]);
+		else
+			i++;
 	}
-	s1[s1_len + i] = '\0';
-	return (s1);
+	return (0);
 }
