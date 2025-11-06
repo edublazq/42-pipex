@@ -28,9 +28,7 @@ static void	init_pipex(int ac, char **av, char **env, t_pipex *pipex)
 	{
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 		{
-			printf("LLEGO HASTA AQUI\n");
 			pipex->path = ft_split(env[i] + 5, ':');
-			printf("SPLIT HECHO");
 			set_path(pipex);
 			break ;
 		}
@@ -46,7 +44,18 @@ static void	new_child(t_pipex *pipex, int *fd_pipe, size_t i, char **env)
 	pipex->child[i] = fork();
 	if (pipex->child[i] == 0)
 	{
-		dup2_manager(fd_pipe[PIPE_READ], fd_pipe[PIPE_WRITE], pipex);
+		if (i == 0)
+		{
+			dup2_manager(fd_pipe[1], pipex->fd[0], pipex);
+			close(pipex->fd[0]);
+		}
+		else if (i == pipex->nb - 1)
+		{
+			dup2_manager(pipex->fd[1], fd_pipe[0], pipex);
+			close(pipex->fd[1]);
+		}
+		else
+			dup2_manager(fd_pipe[1], fd_pipe[0], pipex);
 		close_pipes(fd_pipe);
 		execve(search_cmd(pipex->cmd[i][0], pipex), pipex->cmd[i], env);
 	}
@@ -62,8 +71,6 @@ static void	proc(t_pipex *pipex, char **env)
 	size_t	i;
 
 	pipe(fd_pipe);
-	dup2(pipex->fd[0], fd_pipe[PIPE_WRITE]);
-	dup2(pipex->fd[1], STDOUT_FILENO);
 	i = 0;
 	while (i < pipex->nb)
 	{
@@ -83,16 +90,16 @@ int	main(int ac, char **av, char **env)
 
 	if (ac < 5)
 		exit_error("Not enough arguments", 1);
-	heredoc = 0;
 	pipex = ft_calloc(1, sizeof(t_pipex));
 	if (!pipex)
 		exit_error("malloc fail: ", 1);
 	init_pipex(ac, av, env, pipex);
 	proc(pipex, env);
+	heredoc = 0;
 	if (pipex->here_doc == 1)
 		heredoc = pipex->here_doc;
 	free_pipex(pipex);
 	if (heredoc)
-		unlink(".heredoc"); 
+		unlink(".heredoc");
 	return (0);
 }

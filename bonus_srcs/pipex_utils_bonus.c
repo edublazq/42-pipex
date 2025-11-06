@@ -20,28 +20,25 @@ void	set_path(t_pipex *pipex)
 	while (pipex->path[i] != NULL)
 	{
 		pipex->path[i] = ft_strjoin(pipex->path[i], "/");
-		printf("%s", pipex->path[i]);
 		i++;
 	}
 }
 
 void	set_number(int ac, char **av, t_pipex *pipex)
 {
-	int	nb;
-
-	nb = ac - 2;
-	if (ft_strcmp(av[1], "here_doc") == 0)
+	pipex->nb = ac - 3;
+	if (ft_strcmp(av[1], "here_doc") - 10 == 0)
 	{
 		pipex->here_doc = 1;
-		nb = ac - 3;
+		pipex->nb = ac - 4;
 	}
-	pipex->child = ft_calloc(nb, sizeof(pid_t));
+	printf("%zu", pipex->nb);
+	pipex->child = ft_calloc(pipex->nb, sizeof(pid_t));
 	if (!pipex->child)
 		free_exit(pipex, "malloc error", 1);
-	pipex->cmd = malloc(nb * sizeof(char **));
+	pipex->cmd = ft_calloc(pipex->nb, sizeof(char **));
 	if (!pipex->cmd)
 		free_exit(pipex, "malloc error", 1);
-	pipex->nb = nb;
 }
 
 void	here_doc(char *limit, t_pipex *pipex)

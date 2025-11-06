@@ -25,5 +25,3 @@ void	dup2_manager(int fd_stdout, int fd_stdin, t_pipex *pipex)
 	if (dup2(fd_stdin, STDIN_FILENO) == -1)
 		free_exit(pipex, "dup2 error: ", 1);
 }
-
-

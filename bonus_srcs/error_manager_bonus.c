@@ -42,7 +42,7 @@ void	free_pipex(t_pipex *pipex)
 	if (pipex->fd[0] > 0)
 		close(pipex->fd[0]);
 	if (pipex->fd[1] > 0)
-		close(pipex->fd[1]);	
+		close(pipex->fd[1]);
 	freedom(pipex);
 }
 
