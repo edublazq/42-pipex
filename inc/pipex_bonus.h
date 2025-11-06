@@ -18,12 +18,10 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 
-# define PIPE_READ 0
-# define PIPE_WRITE 1
-
 typedef struct s_pipex
 {
 	int		here_doc;
+	int		prev_fd;
 	size_t	nb;
 	char	***cmd;
 	int		fd[2];

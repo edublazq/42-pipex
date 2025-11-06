@@ -29,7 +29,7 @@ void	free_pipex(t_pipex *pipex)
 	if (pipex->path != NULL)
 		free(pipex->path);
 	i = 0;
-	while (pipex->cmd[i])
+	while (i < pipex->nb)
 	{
 		j = 0;
 		while (pipex->cmd[i][j])

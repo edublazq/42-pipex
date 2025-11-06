@@ -17,6 +17,7 @@ static void	init_pipex(int ac, char **av, char **env, t_pipex *pipex)
 	size_t	i;
 
 	set_number(ac, av, pipex);
+	pipex->prev_fd = -1;
 	i = 0;
 	while (i < pipex->nb)
 	{
@@ -51,11 +52,15 @@ static void	new_child(t_pipex *pipex, int *fd_pipe, size_t i, char **env)
 		}
 		else if (i == pipex->nb - 1)
 		{
-			dup2_manager(pipex->fd[1], fd_pipe[0], pipex);
+			dup2_manager(pipex->fd[1], pipex->prev_fd, pipex);
 			close(pipex->fd[1]);
+			close(pipex->prev_fd);
 		}
 		else
-			dup2_manager(fd_pipe[1], fd_pipe[0], pipex);
+		{
+			dup2_manager(fd_pipe[1], pipex->prev_fd, pipex);
+			close(pipex->prev_fd);
+		}
 		close_pipes(fd_pipe);
 		execve(search_cmd(pipex->cmd[i][0], pipex), pipex->cmd[i], env);
 	}
@@ -70,14 +75,17 @@ static void	proc(t_pipex *pipex, char **env)
 	int		fd_pipe[2];
 	size_t	i;
 
-	pipe(fd_pipe);
 	i = 0;
 	while (i < pipex->nb)
 	{
+		pipe(fd_pipe);
 		new_child(pipex, fd_pipe, i, env);
+		pipex->prev_fd = fd_pipe[0];
+		close(fd_pipe[1]);
+		fd_pipe[0] = -1;
 		i++;
 	}
-	close_pipes(fd_pipe);
+	close(fd_pipe[1]);
 	i = 0;
 	while (i < pipex->nb)
 		waitpid(pipex->child[i++], NULL, 0);
