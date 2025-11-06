@@ -18,6 +18,9 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 
+# define PIPE_READ 0
+# define PIPE_WRITE 1
+
 typedef struct s_pipex
 {
 	int		here_doc;
@@ -28,9 +31,15 @@ typedef struct s_pipex
 	pid_t	*child;
 }	t_pipex;
 
+//CHILDS
+void	close_pipes(int	*pipe);
+void	dup2_manager(int fd_stdout, int fd_stdin, t_pipex *pipex);
+
 //UTILS
 void	set_number(int ac, char **av, t_pipex *pipex);
 void	set_fd(int ac, char **av, t_pipex *pipex);
+void	set_path(t_pipex *pipex);
+char	*search_cmd(char *cmd, t_pipex *pipex);
 
 //ERRORS
 void	freedom(void *to_free);

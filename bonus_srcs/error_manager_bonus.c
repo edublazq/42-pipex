@@ -24,19 +24,25 @@ void	free_pipex(t_pipex *pipex)
 	size_t	j;
 
 	i = 0;
-	j = 0;
+	while (pipex->path[i])
+		free(pipex->path[i++]);
+	if (pipex->path != NULL)
+		free(pipex->path);
+	i = 0;
 	while (pipex->cmd[i])
 	{
+		j = 0;
 		while (pipex->cmd[i][j])
 			freedom(pipex->cmd[i][j++]);
+		freedom(pipex->cmd[i]);
 		i++;
 	}
 	freedom(pipex->cmd);
-	i = 0;
-	while (pipex->path[i])
-		freedom(pipex->path[i++]);
-	freedom(pipex->path);
 	freedom(pipex->child);
+	if (pipex->fd[0] > 0)
+		close(pipex->fd[0]);
+	if (pipex->fd[1] > 0)
+		close(pipex->fd[1]);	
 	freedom(pipex);
 }
 

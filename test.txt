@@ -1,0 +1,12 @@
+total 44
+drwxr-xr-x 2 edblazqu 2025_ceu   105 Nov  5 14:01 bonus_srcs
+drwxr-xr-x 4 edblazqu 2025_ceu    76 Nov  5 11:03 inc
+-rw-r--r-- 1 edblazqu 2025_ceu    13 Oct 28 15:57 infile
+-rw-r--r-- 1 edblazqu 2025_ceu  1075 Nov  5 12:38 Makefile
+-rw-r--r-- 1 edblazqu 2025_ceu     0 Nov  5 12:55 outfile
+-rw-r--r-- 1 edblazqu 2025_ceu    56 Nov  3 14:10 output
+-rw-r--r-- 1 edblazqu 2025_ceu     0 Nov  5 13:05 patata
+-rwxr-xr-x 1 edblazqu 2025_ceu 25688 Nov  5 14:01 pipex
+-rw-r--r-- 1 edblazqu 2025_ceu   237 Oct 28 12:42 README.md
+drwxr-xr-x 2 edblazqu 2025_ceu   114 Nov  5 14:01 srcs
+-rw-r--r-- 1 edblazqu 2025_ceu     0 Nov  5 14:03 test.txt

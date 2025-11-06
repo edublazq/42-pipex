@@ -12,60 +12,26 @@
 
 #include "get_next_line.h"
 
-char	*ft_strjoin_gnl(char *s1, char *s2)
-{
-	char	*join;
-	size_t	i;
-	size_t	j;
-
-	if (!s1 || !s2)
-		return (NULL);
-	i = 0;
-	j = 0;
-	join = (char *)malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!join)
-		return (NULL);
-	while (s1[i])
-	{
-		join[i] = s1[i];
-		i++;
-	}
-	while (s2[j])
-	{
-		join[i + j] = s2[j];
-		j++;
-	}
-	join[i + j] = '\0';
-	free(s1);
-	free(s2);
-	return (join);
-}
-
 char	*new_hold(char *hold, int fd, int *read_info)
 {
 	char	*buffer;
 
 	if (!hold)
 		hold = ft_strdup("");
-	while (1)
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (free(hold), NULL);
+	while (!ft_strchr(hold, '\n') && *read_info != 0)
 	{
-		buffer = malloc(BUFFER_SIZE + 1);
-		if (!buffer)
-			return (NULL);
 		*read_info = read(fd, buffer, BUFFER_SIZE);
 		if (*read_info == -1)
-		{
-			free(buffer);
-			free(hold);
-			return (NULL);
-		}
+			return (free(buffer), free(hold), NULL);
 		buffer[*read_info] = '\0';
-		hold = ft_strjoin_gnl(hold, buffer);
-		if (ft_strchr(hold, '\n'))
-			break ;
-		if (*read_info == 0)
-			break ;
+		hold = ft_strjoin(hold, buffer);
+		if (!hold)
+			return (free(buffer), NULL);
 	}
+	free(buffer);
 	return (hold);
 }
 
@@ -80,15 +46,18 @@ char	*search_hold(char **hold)
 		return (NULL);
 	end = ft_strchr(*hold, '\n');
 	if (!end)
-	{
-		output = ft_strdup(*hold);
-		free(*hold);
-		*hold = NULL;
-		return (output);
-	}
+		return (output = *hold, *hold = NULL, output);
 	i = end - *hold + 1;
 	output = ft_substr(*hold, 0, i);
-	tmp = ft_strdup(end + 1);
+	if (!output)
+		return (free(*hold), *hold = NULL, NULL);
+	tmp = NULL;
+	if (*end != '\0')
+	{
+		tmp = ft_strdup(end + 1);
+		if (!tmp)
+			return (free(*hold), *hold = NULL, free(output), NULL);
+	}
 	free(*hold);
 	*hold = tmp;
 	return (output);
@@ -100,23 +69,25 @@ char	*get_next_line(int fd)
 	static char	*hold;
 	int			read_info;
 
-	read_info = 0;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 	{
-		if (hold)
-			free(hold);
+		free(hold);
+		hold = NULL;
 		return (NULL);
 	}
+	read_info = 1;
 	hold = new_hold(hold, fd, &read_info);
 	if (read_info == 0 && (!hold || *hold == '\0'))
 	{
-		if (hold)
-			free(hold);
+		free(hold);
 		hold = NULL;
 		return (NULL);
 	}
 	output = search_hold(&hold);
-	if (read_info == 0 && (!hold || *hold == '\0'))
+	if (hold && *hold == '\0')
+	{
 		free(hold);
+		hold = NULL;
+	}
 	return (output);
 }
