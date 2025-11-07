@@ -85,7 +85,7 @@ void	process(t_pipe *pipex, char **env)
 	{
 		dup2_manager(fd_pipe[1], pipex->fd[0], pipex);
 		close_pipe(fd_pipe);
-		close(pipex->fd[0]);
+		close_pipe(pipex->fd);
 		execve(search_cmd(pipex->cmd[0][0], pipex), pipex->cmd[0], env);
 	}
 	else if (pipex->child[0] > 0)
@@ -95,7 +95,7 @@ void	process(t_pipe *pipex, char **env)
 		{
 			dup2_manager(pipex->fd[1], fd_pipe[0], pipex);
 			close_pipe(fd_pipe);
-			close(pipex->fd[1]);
+			close_pipe(pipex->fd);
 			execve(search_cmd(pipex->cmd[1][0], pipex), pipex->cmd[1], env);
 		}
 		close_pipe(fd_pipe);

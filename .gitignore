@@ -2,3 +2,5 @@
 infile
 outfile
 output
+.vscode
+.vscode/*

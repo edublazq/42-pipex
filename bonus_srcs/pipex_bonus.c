@@ -73,12 +73,13 @@ static void	proc(t_pipex *pipex, char **env)
 	{
 		pipe(fd_pipe);
 		new_child(pipex, fd_pipe, i, env);
+		close(pipex->prev_fd);
 		pipex->prev_fd = fd_pipe[0];
 		close(fd_pipe[1]);
-		fd_pipe[0] = -1;
 		i++;
 	}
-	close(fd_pipe[1]);
+	close(fd_pipe[0]);
+	close(pipex->prev_fd);
 	i = 0;
 	while (i < pipex->nb)
 		waitpid(pipex->child[i++], NULL, 0);
