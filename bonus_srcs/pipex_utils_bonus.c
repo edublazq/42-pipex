@@ -19,7 +19,7 @@ void	set_path(t_pipex *pipex)
 	i = 0;
 	while (pipex->path[i] != NULL)
 	{
-		pipex->path[i] = ft_strjoin(pipex->path[i], "/");
+		pipex->path[i] = ft_strjoin_free(pipex->path[i], "/");
 		i++;
 	}
 }
@@ -27,12 +27,11 @@ void	set_path(t_pipex *pipex)
 void	set_number(int ac, char **av, t_pipex *pipex)
 {
 	pipex->nb = ac - 3;
-	if (ft_strcmp(av[1], "here_doc") - 10 == 0)
+	if (ft_strcmp(av[1], "here_doc") == 0)
 	{
 		pipex->here_doc = 1;
 		pipex->nb = ac - 4;
 	}
-	printf("%zu", pipex->nb);
 	pipex->child = ft_calloc(pipex->nb, sizeof(pid_t));
 	if (!pipex->child)
 		free_exit(pipex, "malloc error", 1);
@@ -48,11 +47,13 @@ void	here_doc(char *limit, t_pipex *pipex)
 
 	if (!limit)
 		free_exit(pipex, "Wrong limiter! ", 1);
-	pipex->fd[0] = open(".heredoc", O_RDWR | O_CREAT | O_TRUNC, 0644);
-	tmp_fd = pipex->fd[0];
+	tmp_fd = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	pipex->fd[0] = open(".heredoc", O_RDONLY);
+	if (tmp_fd < 0 || pipex->fd[0] < 0)
+		free_exit(pipex, "Heredoc file error: ", 1);
 	ft_printf("heredoc> ");
 	gnl = get_next_line(0);
-	while (ft_strncmp(gnl, limit, ft_strlen(gnl)) - 10 != 0)
+	while (ft_strncmp(gnl, limit, ft_strlen(gnl) - 1) != 0)
 	{
 		ft_putstr_fd(gnl, tmp_fd);
 		freedom(gnl);

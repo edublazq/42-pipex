@@ -32,6 +32,7 @@ typedef struct s_pipex
 //CHILDS
 void	close_pipes(int	*pipe);
 void	dup2_manager(int fd_stdout, int fd_stdin, t_pipex *pipex);
+void	free_child(t_pipex *pipex);
 
 //UTILS
 void	set_number(int ac, char **av, t_pipex *pipex);

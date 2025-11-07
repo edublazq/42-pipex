@@ -25,3 +25,16 @@ void	dup2_manager(int fd_stdout, int fd_stdin, t_pipex *pipex)
 	if (dup2(fd_stdin, STDIN_FILENO) == -1)
 		free_exit(pipex, "dup2 error: ", 1);
 }
+
+void	free_child(t_pipex *pipex)
+{
+	size_t	i;
+
+	i = 0;
+	while (pipex->path[i])
+		freedom(pipex->path[i++]);
+	if (pipex->path != NULL)
+		free(pipex->path);
+	freedom(pipex->child);
+	freedom(pipex);
+}

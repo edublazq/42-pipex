@@ -19,7 +19,7 @@ static void	set_path(t_pipe *pipex)
 	i = 0;
 	while (pipex->path[i] != NULL)
 	{
-		pipex->path[i] = ft_strjoin(pipex->path[i], "/");
+		pipex->path[i] = ft_strjoin_free(pipex->path[i], "/");
 		i++;
 	}
 }

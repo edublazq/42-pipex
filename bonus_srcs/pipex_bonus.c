@@ -46,21 +46,14 @@ static void	new_child(t_pipex *pipex, int *fd_pipe, size_t i, char **env)
 	if (pipex->child[i] == 0)
 	{
 		if (i == 0)
-		{
 			dup2_manager(fd_pipe[1], pipex->fd[0], pipex);
-			close(pipex->fd[0]);
-		}
 		else if (i == pipex->nb - 1)
-		{
 			dup2_manager(pipex->fd[1], pipex->prev_fd, pipex);
-			close(pipex->fd[1]);
-			close(pipex->prev_fd);
-		}
 		else
-		{
 			dup2_manager(fd_pipe[1], pipex->prev_fd, pipex);
+		if (i != 0)
 			close(pipex->prev_fd);
-		}
+		close_pipes(pipex->fd);
 		close_pipes(fd_pipe);
 		execve(search_cmd(pipex->cmd[i][0], pipex), pipex->cmd[i], env);
 	}

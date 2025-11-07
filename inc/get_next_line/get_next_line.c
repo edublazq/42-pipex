@@ -27,7 +27,7 @@ char	*new_hold(char *hold, int fd, int *read_info)
 		if (*read_info == -1)
 			return (free(buffer), free(hold), NULL);
 		buffer[*read_info] = '\0';
-		hold = ft_strjoin(hold, buffer);
+		hold = ft_strjoin_free(hold, buffer);
 		if (!hold)
 			return (free(buffer), NULL);
 	}
