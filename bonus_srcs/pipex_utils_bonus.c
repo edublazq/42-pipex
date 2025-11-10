@@ -40,13 +40,16 @@ void	set_number(int ac, char **av, t_pipex *pipex)
 		free_exit(pipex, "malloc error", 1);
 }
 
-void	here_doc(char *limit, t_pipex *pipex)
+void	here_doc(char *limit, char **av, int ac, t_pipex *pipex)
 {
 	int		tmp_fd;
 	char	*gnl;
 
 	if (!limit)
 		free_exit(pipex, "Wrong limiter! ", 1);
+	pipex->fd[1] = open(av[ac - 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (pipex->fd[1] == -1)
+		free_exit(pipex, "File descriptor error 2", 3);
 	tmp_fd = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	pipex->fd[0] = open(".heredoc", O_RDONLY);
 	if (tmp_fd < 0 || pipex->fd[0] < 0)
@@ -66,14 +69,14 @@ void	here_doc(char *limit, t_pipex *pipex)
 
 void	set_fd(int ac, char **av, t_pipex *pipex)
 {
+	if (pipex->here_doc == 1)
+	{
+		here_doc(av[2], av, ac, pipex);
+		return ;
+	}
 	pipex->fd[1] = open(av[ac - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (pipex->fd[1] == -1)
 		free_exit(pipex, "File descriptor error 2", 3);
-	if (pipex->here_doc == 1)
-	{
-		here_doc(av[2], pipex);
-		return ;
-	}
 	pipex->fd[0] = open(av[1], O_RDONLY);
 	if (pipex->fd[0] == -1)
 		free_exit(pipex, "File descriptor error 1", 3);
