@@ -12,6 +12,14 @@
 
 #include "../inc/pipex_bonus.h"
 
+void	infile_error(t_pipex *pipex)
+{
+	perror("infile: ");
+	pipex->fd[0] = open("/dev/null", O_RDONLY);
+	if (pipex->fd[0] < 0)
+		free_exit(pipex, "Fd error: ", 2);
+}
+
 void	freedom(void *to_free)
 {
 	free(to_free);

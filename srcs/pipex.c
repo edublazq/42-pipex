@@ -33,7 +33,7 @@ static t_pipe	*init_pipex(char **av, char **env, t_pipe *pipex)
 		free_error(pipex, "File descriptor error 2", 3);
 	pipex->fd[0] = open(av[1], O_RDONLY);
 	if (pipex->fd[0] == -1)
-		free_error(pipex, "File descriptor error 1", 3);
+		infile_error(pipex);
 	pipex->cmd[0] = ft_split(av[2], ' ');
 	pipex->cmd[1] = ft_split(av[3], ' ');
 	i = 0;

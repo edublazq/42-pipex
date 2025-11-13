@@ -79,7 +79,7 @@ void	set_fd(int ac, char **av, t_pipex *pipex)
 		free_exit(pipex, "File descriptor error 2", 3);
 	pipex->fd[0] = open(av[1], O_RDONLY);
 	if (pipex->fd[0] == -1)
-		free_exit(pipex, "File descriptor error 1", 3);
+		infile_error(pipex);
 }
 
 char	*search_cmd(char *cmd, t_pipex *pipex)

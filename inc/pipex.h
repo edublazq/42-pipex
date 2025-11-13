@@ -32,6 +32,7 @@ void	dup2_manager(int fd_stdout, int fd_stdin, t_pipe *pipex);
 void	close_pipe(int *pipe);
 
 //ERROR MANAGEMENT
+void	infile_error(t_pipe *pipex);
 void	*free_error(void *toclean, char *msg, int exit_code);
 void	*free_pipex(t_pipe *pipex);
 

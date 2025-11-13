@@ -12,6 +12,14 @@
 
 #include "../inc/pipex.h"
 
+void	infile_error(t_pipe *pipex)
+{
+	perror("infile: ");
+	pipex->fd[0] = open("/dev/null", O_RDONLY);
+	if (pipex->fd[0] < 0)
+		free_error(pipex, "Fd error: ", 2);
+}
+
 void	*free_pipex(t_pipe *pipex)
 {
 	size_t	i;

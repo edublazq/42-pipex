@@ -41,6 +41,7 @@ void	set_path(t_pipex *pipex);
 char	*search_cmd(char *cmd, t_pipex *pipex);
 
 //ERRORS
+void	infile_error(t_pipex *pipex);
 void	freedom(void *to_free);
 void	exit_error(char *msg, int exit_code);
 void	free_pipex(t_pipex *pipex);

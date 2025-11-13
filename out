@@ -1,0 +1,9 @@
+total 128
+drwxr-xr-x 2 bamberger12 bamberger12   4096 nov 13 14:26 bonus_srcs
+drwxr-xr-x 4 bamberger12 bamberger12   4096 nov  6 12:35 inc
+-rw-r--r-- 1 bamberger12 bamberger12   1075 nov  6 12:35 Makefile
+-rw-r--r-- 1 bamberger12 bamberger12      0 nov 13 14:26 out
+-rw-r--r-- 1 bamberger12 bamberger12      0 nov  7 00:46 outfile
+-rwxr-xr-x 1 bamberger12 bamberger12 107672 nov 13 14:26 pipex_bonus
+-rw-r--r-- 1 bamberger12 bamberger12    237 nov  4 11:53 README.md
+drwxr-xr-x 2 bamberger12 bamberger12   4096 nov 13 14:24 srcs
